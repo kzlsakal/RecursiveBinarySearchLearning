@@ -9,39 +9,39 @@ note: the idea of binary search is efficiency. using the prototype sort method m
 
 // functions
 
-// create a preliminary function that will sort the data before using it with our main function
-function searchIndexRecursiveRawData(data, searchValue, rangeMin, rangeMax) {
+// create a preliminary function that will run a recursive function with added arguments (min/max) and sort the data 
+function searchIndexRecursiveRawData(data, searchValue) {
 
   // sort the array
   let sortedData = data.sort(compareNumbers);
   
-  // run the main function with the sorted array
-  return searchIndexRecursive(sortedData, searchValue, rangeMin, rangeMax);
+  // run the main function with the sorted array with min/max range arguments
+  return searchRecursive(sortedData, searchValue, 0, sortedData.length - 1);
 }
 
-function searchIndexRecursive(data, searchValue, rangeMin, rangeMax) {
-  // if the search range is invalid, return null.
-  if (rangeMin > rangeMax) {
+function searchRecursive(array, value, min, max) {  
+  // return null if the min value is greater than the max value
+  if (min > max){
     return null;
   }
-  // assign the middle point
-  let middlePoint = Math.floor((rangeMin + rangeMax) / 2);
-  
 
-  // if the middle point is equal to the searched value, return its index.
-  if (data[middlePoint] === searchValue) {
-    return middlePoint;
-  
-  // if the searched value is greater than the middle point, focus on the second half.
-  } else if (data[middlePoint] < searchValue) {
-    // return the same function with the updated information
-    return searchIndexRecursive(data, searchValue, middlePoint + 1, rangeMax)
-  
-  // otherwise, focus on the first half.
-  } else {
-    // return the same function with the updated information
-    return searchIndexRecursive(data, searchValue, rangeMin, middlePoint - 1)
+  // pick a mid point
+  let mid = Math.floor((min + max) / 2);
+  // return the respective index if midpoint is the seached value
+  if (array[mid] === value) {
+    return mid;
   }
+
+  // update the min/max range
+  if (value > array[mid]) {
+    min = mid + 1;
+  } else if (value < array[mid]) {
+    max = mid - 1;
+  }
+
+  // run the function again
+  return searchRecursive(array, value, min, max);
+
 }
 
 // helper function for sorting
@@ -63,7 +63,7 @@ function assertEqual(actual, expected, testName) {
 function testRecursiveBinarySearchSorted() {
   let data = [25, 28, 32, 36, 56];
   let searchValue = 36;
-  let actual = searchIndexRecursiveRawData(data, searchValue, 0, data.length - 1);
+  let actual = searchIndexRecursiveRawData(data, searchValue);
   let expected = 3;
   let testResult = assertEqual(actual, expected, 'Should return the correct index when the input is a sorted array and a number');
 }
@@ -71,7 +71,7 @@ function testRecursiveBinarySearchSorted() {
 function testRecursiveBinarySearchNotFound() {
   let data = [25, 28, 32, 36, 56];
   let searchValue = 35;
-  let actual = searchIndexRecursiveRawData(data, searchValue, 0, data.length - 1);
+  let actual = searchIndexRecursiveRawData(data, searchValue);
   let expected = null;
   let testResult = assertEqual(actual, expected, 'Should return null index if the searched value is not found');
 }
@@ -79,7 +79,7 @@ function testRecursiveBinarySearchNotFound() {
 function testRecursiveBinarySearchUnsorted() {
   let data = [22, 5, 39, 7, 25, 156, 3];
   let searchValue = 25;
-  let actual = searchIndexRecursiveRawData(data, searchValue, 0, data.length - 1);
+  let actual = searchIndexRecursiveRawData(data, searchValue);
   let expected = 4;
   let testResult = assertEqual(actual, expected, 'Should sort the data properly and then give us the index of the search value in it');
 }
@@ -87,7 +87,7 @@ function testRecursiveBinarySearchUnsorted() {
 function testRecursiveBinarySearchNegativeUnsorted() {
   let data = [22, -5, 39, 7, -25, 156, 38, -3,];
   let searchValue = 38;
-  let actual = searchIndexRecursiveRawData(data, searchValue, 0, data.length - 1);
+  let actual = searchIndexRecursiveRawData(data, searchValue);
   let expected = 5;
   let testResult = assertEqual(actual, expected, 'Should return the correct index when the data is unsorted and negative numbers are used along with positive numbers');
 }
@@ -95,7 +95,7 @@ function testRecursiveBinarySearchNegativeUnsorted() {
 function testRecursiveBinarySearchFloatNumbers() {
   let data = [22, -5.36, 39.21, 7.569, -25.22, 156, 38.0956, -3.54,];
   let searchValue = 38.0956;
-  let actual = searchIndexRecursiveRawData(data, searchValue, 0, data.length - 1);
+  let actual = searchIndexRecursiveRawData(data, searchValue);
   let expected = 5;
   let testResult = assertEqual(actual, expected, 'Should work with decimals, positive and negative numbers, with unsorted data.');
 }
